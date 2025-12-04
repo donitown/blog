@@ -23,7 +23,7 @@ export const ARTICLE_DATA = [
       category: ArticleCategory.DIT,
       link: 'https://mp.weixin.qq.com/s/Xr0iwjJEL8PFTOMaNQrrcw',
       coverImage: 'https://mmbiz.qpic.cn/mmbiz_png/MpZIibj0bjSxia9WZLRmXzBEia5gTIGyGFL9PpU1MOwnTLHyHicpQttEOQKRDL4DqMsxMiaiaQbACYjy9nibAQqbnCYuA/640?wx_fmt=png&from=appmsg&tp=wxpic&wxfrom=5&wx_lazy=1#imgIndex=0',
-      date: '2025-11-30'
+      date: '2025-12-02'
     },
     zh: {
       title: '个人周报 | 25/11/24~25/11/30',
@@ -38,7 +38,7 @@ export const ARTICLE_DATA = [
       category: ArticleCategory.DIT,
       link: 'https://mp.weixin.qq.com/s/HNqw1QRUbKH3JF5pzCJh1w',
       coverImage: 'https://mmbiz.qpic.cn/mmbiz_png/MpZIibj0bjSz5xQ3ibMkLvPlgXSVVxFowfMicPUWYcIObNRX6ia9khOFuErb9AqytTDI0rOQvNR2Zw9A6E4jeV46ZQ/640?wx_fmt=png&from=appmsg&tp=wxpic&wxfrom=5&wx_lazy=1#imgIndex=1',
-      date: '2025-12-03'
+      date: '2025-11-28'
     },
     zh: {
       title: '探索 | Gemini3制作工牌生成器，前端品味这一块',
@@ -53,7 +53,7 @@ export const ARTICLE_DATA = [
       category: ArticleCategory.DIT,
       link: 'https://mp.weixin.qq.com/s/qH8625_XRMskKZcZjzIhOw',
       coverImage: 'https://mmbiz.qpic.cn/mmbiz_png/MpZIibj0bjSxVKsYmCvve9QX3xH01xCd0595CLR6iaMn9hR4w9XON9DHztW9I2GbMjRvj6WyxzGnCorhLvciaNmXA/640?wx_fmt=png&from=appmsg&tp=wxpic&wxfrom=5&wx_lazy=1#imgIndex=1',
-      date: '2025-11-24'
+      date: '2025-11-20'
     },
     zh: {
       title: '创作杂谈 | 冲击一舞（下）：风雨厦门Vlog，微信数据分析',
@@ -68,7 +68,7 @@ export const ARTICLE_DATA = [
       category: ArticleCategory.DIT,
       link: 'https://mp.weixin.qq.com/s/NnoBfuFx6qtPhpB3tlVQbQ',
       coverImage: 'https://mmbiz.qpic.cn/mmbiz_gif/MpZIibj0bjSxL76pgFq88AcIFE4ibaUMQAokeb9Bq5Kl9D2c1NN5rUf9QO4D3xtBpEjrDhibn9QiagC70kwQ58FzHg/640?wx_fmt=gif&from=appmsg',
-      date: '2024-10-24'
+      date: '2025-10-24'
     },
     zh: {
       title: '1024 for programmer',
@@ -83,7 +83,7 @@ export const ARTICLE_DATA = [
       category: ArticleCategory.DIT,
       link: 'https://mp.weixin.qq.com/s/reb9nK4GiDr483HMX-N5pA',
       coverImage: 'https://mmbiz.qpic.cn/mmbiz_png/MpZIibj0bjSxia9WZLRmXzBEia5gTIGyGFLuIDlR2D3S9Oug9HXibO34Uh8kdkCegjYjiawvFUjBic3lrWvDMiaCj9U8w/640?wx_fmt=png&from=appmsg',
-      date: '2023-11-24'
+      date: '2025-10-10'
     },
     zh: {
       title: '分享会 | 基于事件相机的计算机视觉技术',
@@ -98,7 +98,7 @@ export const ARTICLE_DATA = [
       category: ArticleCategory.DIT,
       link: 'https://mp.weixin.qq.com/s/WR3c6hOaD-f2iuf6KTo_XQ',
       coverImage: 'https://mmbiz.qpic.cn/mmbiz_png/MpZIibj0bjSxia9WZLRmXzBEia5gTIGyGFLvXZsGpXncGxuThYaL8EejvLsw2mF6kXdMjD7IlZnSEibzHibAq2DwGicw/640?wx_fmt=png&from=appmsg',
-      date: '2024-01-10'
+      date: '2025-10-09'
     },
     zh: {
       title: '课程分享 | 人机交互技术基础（大作业）',
@@ -113,7 +113,7 @@ export const ARTICLE_DATA = [
       category: ArticleCategory.DIT,
       link: 'https://mp.weixin.qq.com/s/LsVn2PKv2Vzbbrp7A0fjOQ',
       coverImage: 'https://mmbiz.qpic.cn/mmbiz_png/MpZIibj0bjSzvLXPX03euo8DhGSictsug6LYMicGLIAtdcFdL7denHprOM72CicU9HRqwz6ELNQh8QiaxMR42omxZ6A/640?wx_fmt=png&from=appmsg',
-      date: '2023-09-10'
+      date: '2025-09-27'
     },
     zh: {
       title: '课程分享 | 2023瑶里实践报告',
@@ -128,7 +128,7 @@ export const ARTICLE_DATA = [
       category: ArticleCategory.DIT,
       link: 'https://mp.weixin.qq.com/s/xMFigrej5xRRQNo_wQZhiQ',
       coverImage: 'https://mmbiz.qpic.cn/mmbiz_png/MpZIibj0bjSx6hUCGhS5WH8mOepETuSc0RyKxZ9CPPfSyE6w4eo15Bp75hHE9d0lQTGolzoNXEWnGF78WYoYkEw/640?wx_fmt=png&from=appmsg',
-      date: '2025-01-01'
+      date: '2025-08-06'
     },
     zh: {
       title: '这是课吗 | 数媒竞赛工作坊2025（四）',
@@ -143,7 +143,7 @@ export const ARTICLE_DATA = [
       category: ArticleCategory.DIT,
       link: 'https://mp.weixin.qq.com/s/dk3GjYxGcbQC2oCnOqkd6w',
       coverImage: 'https://mmbiz.qpic.cn/mmbiz_png/MpZIibj0bjSxia9WZLRmXzBEia5gTIGyGFLL4blOZ1Ffia0l7IpDica05PpQkR6WMPiciaYkMURR9nlu4wVjibxHIuaZVA/640?wx_fmt=png&from=appmsg',
-      date: '2025-01-01'
+      date: '2025-08-06'
     },
     zh: {
       title: '这是课吗 | 数媒竞赛工作坊2025（二）',
@@ -158,7 +158,7 @@ export const ARTICLE_DATA = [
       category: ArticleCategory.DIT,
       link: 'https://mp.weixin.qq.com/s/0R4HV0ZTObw43d7Yrc8e4Q',
       coverImage: 'https://mmbiz.qpic.cn/mmbiz_png/MpZIibj0bjSxia9WZLRmXzBEia5gTIGyGFL5M09KLJmdpjVD3bYrmlJOfmLQr4TnZWfNibvgNJaXdTAHpicGvV4ibwUA/640?wx_fmt=png&from=appmsg',
-      date: '2025-01-01'
+      date: '2025-08-05'
     },
     zh: {
       title: '这是课吗 | 数媒竞赛工作坊2025（一）',
@@ -173,7 +173,7 @@ export const ARTICLE_DATA = [
       category: ArticleCategory.DIT,
       link: 'https://mp.weixin.qq.com/s/Lw398A_ydfWRP-usPFo91A',
       coverImage: 'https://mmbiz.qpic.cn/mmbiz_png/MpZIibj0bjSxia9WZLRmXzBEia5gTIGyGFLiaaic9AF2mF8OY0EqkncQ1SdmPXibCACspNN0okgr2DicW8RLYibj38RBxA/640?wx_fmt=png&from=appmsg',
-      date: '2024-05-20'
+      date: '2024-11-11'
     },
     zh: {
       title: '分享会 | 本科竞赛基础经验谈(下)',
@@ -188,7 +188,7 @@ export const ARTICLE_DATA = [
       category: ArticleCategory.DIT,
       link: 'https://mp.weixin.qq.com/s/5jyEsE_za55JfOg-M6-y1A',
       coverImage: 'https://mmbiz.qpic.cn/mmbiz_png/MpZIibj0bjSyRAg2JOoGEZ01eDXnnfOPUHN417hXiaRW1Coe2haP8mNANp5hGic0TC80XRxojJqBlyxUV93HcKG3A/640?wx_fmt=png&from=appmsg',
-      date: '2024-05-20'
+      date: '2024-11-10'
     },
     zh: {
       title: '分享会 | 本科竞赛基础经验谈(上)',
@@ -203,7 +203,7 @@ export const ARTICLE_DATA = [
       category: ArticleCategory.DIT,
       link: 'https://mp.weixin.qq.com/s/RvHcvaiG9SsdrRnlczhaYw',
       coverImage: 'https://mmbiz.qpic.cn/mmbiz_png/MpZIibj0bjSxia9WZLRmXzBEia5gTIGyGFLNIHqbcSj1cTRCDRicVooKn0Ff2A5JGAiaBVwtnsIN1vta2Tdibaur8MsA/640?wx_fmt=png&from=appmsg',
-      date: '2023-06-01'
+      date: '2024-10-29'
     },
     zh: {
       title: '课程分享 | 传播学',
@@ -218,7 +218,7 @@ export const ARTICLE_DATA = [
       category: ArticleCategory.DIT,
       link: 'https://mp.weixin.qq.com/s/HJf6imvOEv_OiNGbNCNJBg',
       coverImage: 'https://mmbiz.qpic.cn/mmbiz_png/MpZIibj0bjSxia9WZLRmXzBEia5gTIGyGFLrtnA86J4jdNVapNnZFMYR7RM9BujReZWhMduiaey1gm8Gsic10eeaCOA/640?wx_fmt=png&from=appmsg',
-      date: '2023-06-01'
+      date: '2024-10-26'
     },
     zh: {
       title: '课程分享 | 机器学习导论',
@@ -233,7 +233,7 @@ export const ARTICLE_DATA = [
       category: ArticleCategory.DIT,
       link: 'https://mp.weixin.qq.com/s/MD5T-BsAgUi9yUo6ISY1CA',
       coverImage: 'https://mmbiz.qpic.cn/mmbiz_png/MpZIibj0bjSxia9WZLRmXzBEia5gTIGyGFLfSF77yb1mvcpqMF3TmOweR6vfHENcSLf5zJ9UljWSBdhyibE4TNFZzw/640?wx_fmt=png&from=appmsg',
-      date: '2023-05-01'
+      date: '2025-10-10'
     },
     zh: {
       title: '频道介绍 | DiT',
@@ -248,7 +248,7 @@ export const ARTICLE_DATA = [
       category: ArticleCategory.LUNA,
       link: 'https://mp.weixin.qq.com/s/vJ0vYDC7o4IriMAnqUC__g',
       coverImage: 'https://mmbiz.qpic.cn/mmbiz_png/MpZIibj0bjSzEeGoKj9py128g6GwhFAibwxHR3TTV0ExpWYFFvg91Y4bAJyY5weRGNzWJSFtXiaLVNia6nxJxLzXmA/640?wx_fmt=png&from=appmsg',
-      date: '2024-05-24'
+      date: '2025-10-19'
     },
     zh: {
       title: '创作杂谈 | 冲击波的全力一舞，圆方之比诞生回忆录(中)：制作路漫漫',
@@ -263,7 +263,7 @@ export const ARTICLE_DATA = [
       category: ArticleCategory.LUNA,
       link: 'https://mp.weixin.qq.com/s/Fkn53KTk_zVlv7uc-sJoiw',
       coverImage: 'https://mmbiz.qpic.cn/mmbiz_png/MpZIibj0bjSzEeGoKj9py128g6GwhFAibwMECIL4Ec28HprajQMqWOOcgv0WicJGPggRnEaJzWyEIspmia7r2RyEOQ/640?wx_fmt=png&from=appmsg',
-      date: '2024-05-24'
+      date: '2025-10-18'
     },
     zh: {
       title: '创作杂谈 | 冲击波的全力一舞，圆方之比诞生回忆录(上)：难产的策划',

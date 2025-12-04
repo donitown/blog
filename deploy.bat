@@ -1,0 +1,33 @@
+@echo off
+echo ========================================================
+echo       LuN3cy Website Content Update Helper
+echo ========================================================
+echo.
+echo This script will help you upload your changes to GitHub.
+echo GitHub Actions will then automatically build and deploy your site.
+echo.
+
+echo 1. Adding all changes...
+git add .
+
+echo.
+set /p commit_msg="Enter a description for this update (e.g., 'Added new photos'): "
+
+if "%commit_msg%"=="" set commit_msg=Content update
+
+echo.
+echo 2. Committing changes...
+git commit -m "%commit_msg%"
+
+echo.
+echo 3. Pushing to GitHub...
+git push origin main
+
+echo.
+echo ========================================================
+echo Success! Your changes have been pushed.
+echo Please wait 1-3 minutes for GitHub Pages to update.
+echo You can check progress at: https://github.com/LuN3cy/LuN3cy/actions
+echo ========================================================
+echo.
+pause
