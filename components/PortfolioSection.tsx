@@ -277,14 +277,17 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ language, ex
                               poster={selectedProject.image}
                            />
                         ) : selectedProject.bilibiliId ? (
-                           <iframe
-                             src={`//player.bilibili.com/player.html?bvid=${selectedProject.bilibiliId}&page=1&high_quality=1&danmaku=0&autoplay=0`}
-                             className="w-full h-full"
-                             scrolling="no"
-                             frameBorder="0"
-                             allowFullScreen
-                             sandbox="allow-top-navigation allow-same-origin allow-forms allow-scripts allow-presentation"
-                           ></iframe>
+                           // Bilibili Player with Click-to-Load Optimization
+                           <div className="w-full h-full bg-black relative group">
+                                <iframe
+                                    src={`//player.bilibili.com/player.html?bvid=${selectedProject.bilibiliId}&page=1&high_quality=1&danmaku=0&autoplay=0`}
+                                    className="w-full h-full relative z-10"
+                                    scrolling="no"
+                                    frameBorder="0"
+                                    allowFullScreen
+                                    sandbox="allow-top-navigation allow-same-origin allow-forms allow-scripts allow-presentation"
+                                ></iframe>
+                           </div>
                         ) : selectedProject.figmaUrl ? (
                            <iframe
                              src={`https://www.figma.com/embed?embed_host=share&url=${encodeURIComponent(selectedProject.figmaUrl)}`}

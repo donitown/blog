@@ -18,7 +18,7 @@ export const PROJECT_DATA = [
     id: 'v1',
     common: {
       category: 'Videography',
-      image: 'http://i0.hdslb.com/bfs/archive/9af1a5d76c3de63f4a2870659fcfb6401cdee842.jpg',
+      image: 'https://i0.hdslb.com/bfs/archive/9af1a5d76c3de63f4a2870659fcfb6401cdee842.jpg',
       bilibiliId: 'BV1KD2iYBEjF'
     },
     zh: {
@@ -46,7 +46,7 @@ export const PROJECT_DATA = [
     id: 'v2',
     common: {
       category: 'Videography',
-      image: 'http://i0.hdslb.com/bfs/archive/fca8e515a522bd07fe591fa6c30cd958fe761cd0.jpg',
+      image: 'https://i0.hdslb.com/bfs/archive/fca8e515a522bd07fe591fa6c30cd958fe761cd0.jpg',
       bilibiliId: 'BV1U24y1T7DP'
     },
     zh: {
@@ -74,7 +74,7 @@ export const PROJECT_DATA = [
     id: 'v3',
     common: {
       category: 'Videography',
-      image: 'http://i1.hdslb.com/bfs/archive/b905e0923346788d63571299af1cf07783f3a983.jpg',
+      image: 'https://i1.hdslb.com/bfs/archive/b905e0923346788d63571299af1cf07783f3a983.jpg',
       bilibiliId: 'BV1We41117v8'
     },
     zh: {
@@ -102,7 +102,7 @@ export const PROJECT_DATA = [
     id: 'v4',
     common: {
       category: 'Videography',
-      image: 'http://i1.hdslb.com/bfs/archive/3407a7d6d535c422658369516dde52c231403852.jpg',
+      image: 'https://i1.hdslb.com/bfs/archive/3407a7d6d535c422658369516dde52c231403852.jpg',
       bilibiliId: 'BV1NiS1BFEhd'
     },
     zh: {
