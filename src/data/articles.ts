@@ -318,6 +318,21 @@ export const ARTICLE_DATA = [
     }
   },
   {
+    id: 'l4',
+    common: {
+      category: ArticleCategory.LUNA,
+      link: 'https://mp.weixin.qq.com/s/DfmnO5ESepglhWDiF_tJcQ',
+      coverImage: 'https://mmbiz.qpic.cn/mmbiz_png/MpZIibj0bjSym38IftGicAWNwhwavzH9hRlicib8Xr9aU3BEpRsstTsVeNlicMhbdeA2fB3mK9w9eeT2icWZDyYs0P2A/640?wx_fmt=png&from=appmsg&tp=wxpic&wxfrom=5&wx_lazy=1#imgIndex=0',
+      date: '2025-12-10'
+    },
+    zh: {
+      title: '摄 影 作 品 大 放 送',
+    },
+    en: {
+      title: 'Photography Portfolio',
+    }
+  },
+  {
     id: 'af1',
     common: {
       category: ArticleCategory.AFTER8,

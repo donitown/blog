@@ -5,7 +5,7 @@ export const PHOTOGRAPHY_PROJECTS: Project[] = [
     id: 'p1',
     common: {
       category: 'Photography',
-      image: 'https://lun3cy.notion.site/image/attachment%3A26b52a3b-9696-4adb-8fa8-b5ffd33a21ad%3A_FZK8381.jpg?table=block&id=2c0f4f61-90b0-80a2-870b-d5d5ff82297f&spaceId=bfa23b18-0167-4223-aea0-06f1efb0e882&width=1420&userId=&cache=v2',
+      image: 'https://mmbiz.qpic.cn/mmbiz_jpg/MpZIibj0bjSym38IftGicAWNwhwavzH9hRqulRYy4XYt210iaN4wRicELqA79ywY3mmgyictP5C5NAJb5B9VhavibtMg/640?wx_fmt=jpeg&from=appmsg&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=1',
     },
     zh: {
       title: '风景',
@@ -20,7 +20,7 @@ export const PHOTOGRAPHY_PROJECTS: Project[] = [
     en: {
       title: 'Landscape',
       subtitle: '',
-      description: 'The mountains and rivers remain, but the people have changed.',
+      description: 'Mountains May Depart',
       role: '',
       tags: [],
       awards: [],
@@ -32,12 +32,12 @@ export const PHOTOGRAPHY_PROJECTS: Project[] = [
     id: 'p2',
     common: {
       category: 'Photography',
-      image: 'https://lun3cy.notion.site/image/attachment%3Adda84365-a81a-4dbe-8eb2-371a2c1bd3b5%3Athumbnail.jpg?table=block&id=2c0f4f61-90b0-80bb-aa32-f547a50011ea&spaceId=bfa23b18-0167-4223-aea0-06f1efb0e882&width=1420&userId=&cache=v2',
+      image: 'https://mmbiz.qpic.cn/mmbiz_jpg/MpZIibj0bjSym38IftGicAWNwhwavzH9hRcnbw6AdBMu1QHAdcibpxTfz5MhDESboc1Ny5NvXC90KTstEW33jDXTw/640?wx_fmt=jpeg&from=appmsg&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=37',
     },
     zh: {
       title: '人文纪实',
       subtitle: '',
-      description: '回忆与瞬间。',
+      description: '回忆与瞬间',
       role: '',
       tags: [],
       awards: [],
@@ -45,9 +45,9 @@ export const PHOTOGRAPHY_PROJECTS: Project[] = [
       roleDetail: ""
     },
     en: {
-      title: 'Human Documentary',
+      title: 'Documentary',
       subtitle: '',
-      description: 'Memories and moments.',
+      description: 'Memories and moments',
       role: '',
       tags: [],
       awards: [],
@@ -59,12 +59,12 @@ export const PHOTOGRAPHY_PROJECTS: Project[] = [
     id: 'p3',
     common: {
       category: 'Photography',
-      image: 'https://lun3cy.notion.site/image/attachment%3A65586933-2321-4dab-8999-80e22fd0d28e%3Athumbnail.jpg?table=block&id=2c0f4f61-90b0-8068-b292-d4a27f4660c2&spaceId=bfa23b18-0167-4223-aea0-06f1efb0e882&width=1420&userId=&cache=v2',
+      image: 'https://mmbiz.qpic.cn/mmbiz_jpg/MpZIibj0bjSym38IftGicAWNwhwavzH9hRsYUjlBeYKR2Vib1fUpYS1icJaftdGyuPbg70E1WxswADYA4LtLdCgicNA/640?wx_fmt=jpeg&from=appmsg&tp=webp&wxfrom=5&wx_lazy=1#imgIndex=52',
     },
     zh: {
       title: '空间',
       subtitle: '',
-      description: '那些一直塑造着我们的行为与感受的。',
+      description: '那些一直塑造着我们的行为与感受的',
       role: '',
       tags: [],
       awards: [],
@@ -74,7 +74,7 @@ export const PHOTOGRAPHY_PROJECTS: Project[] = [
     en: {
       title: 'Space',
       subtitle: '',
-      description: 'Those that have always shaped our behaviors and feelings.',
+      description: 'Those that have always shaped us',
       role: '',
       tags: [],
       awards: [],
