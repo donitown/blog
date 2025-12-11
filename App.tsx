@@ -26,6 +26,15 @@ function App() {
   const [portfolioCategory, setPortfolioCategory] = useState<string>('All');
   
   const [gravityActive, setGravityActive] = useState(false);
+
+  const startViewTransition = (update: () => void) => {
+    const anyDoc = document as any;
+    if (anyDoc && typeof anyDoc.startViewTransition === 'function') {
+      anyDoc.startViewTransition(update);
+    } else {
+      update();
+    }
+  };
   const engineRef = useRef<any>(null);
   const runnerRef = useRef<any>(null);
   const requestRef = useRef<number | null>(null);
@@ -63,9 +72,11 @@ function App() {
   };
 
   const handleHeroNavigation = (category: Category) => {
-    setPortfolioCategory(category);
-    setActiveTab('portfolio');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    startViewTransition(() => {
+      setPortfolioCategory(category);
+      setActiveTab('portfolio');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   };
   
   // -------------------------
@@ -343,7 +354,7 @@ function App() {
         return (
           <>
             <HeroSection 
-              onNavigate={setActiveTab} 
+              onNavigate={(tab) => startViewTransition(() => setActiveTab(tab))} 
               onCategorySelect={handleHeroNavigation}
               language={language} 
             />
@@ -633,7 +644,7 @@ function App() {
         return (
           <>
             <HeroSection 
-              onNavigate={setActiveTab} 
+              onNavigate={(tab) => startViewTransition(() => setActiveTab(tab))} 
               onCategorySelect={handleHeroNavigation}
               language={language} 
             />
@@ -649,7 +660,7 @@ function App() {
       {/* Dynamic Navigation */}
       <Sidebar 
         activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
+        setActiveTab={(tab) => startViewTransition(() => setActiveTab(tab))} 
         language={language}
         toggleLanguage={toggleLanguage}
         theme={theme}
@@ -658,8 +669,10 @@ function App() {
       />
 
       {/* Main Content Area */}
-      <main className="w-full pt-40 pb-32">
-         {renderContent()}
+      <main className="w-full pt-40 pb-32 vt-page">
+         <div key={activeTab} className="animate-fade-in">
+           {renderContent()}
+         </div>
 
          {/* Footer */}
          <footer className="w-full max-w-[96vw] mx-auto mt-32 border-t-2 border-black dark:border-white pt-12 flex flex-col md:flex-row justify-between items-center text-sm font-light text-gray-400 dark:text-gray-500 uppercase tracking-wide gap-4 transition-colors duration-300">
