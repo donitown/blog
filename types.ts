@@ -10,48 +10,60 @@ export enum Category {
   ARTICLE = 'Article'
 }
 
-export enum ArticleCategory {
-  DIT = 'DiT', // 数媒与课程
-  LUNA = 'LUNA', // 影像相关
-  TALK = '瞎叨be叨', // 杂记
-  AFTER8 = 'After8', // 聊艺术
-  SERENITY = '山海疗养院' // 游记
-}
+export type ArticleCategory = string; // 动态分类，基于文件夹名
 
 export interface Article {
   id: string;
   title: string;
   category: ArticleCategory;
-  link: string; // WeChat Official Account Link
+  link: string; // 内部链接，基于 id
   coverImage?: string; // Optional, will fallback if not provided
   date?: string;
+  content?: string; // Markdown 内容
+  tags?: string[]; // 从 YAML 解析
 }
 
 export interface Project {
   id: string;
-  title: string;
-  subtitle: string;
-  category: Category;
-  description: string;
-  role: string;
-  image: string; // URL placeholder (Cover/Thumbnail)
-  videoUrl?: string; // URL to .mp4 file
-  bilibiliId?: string; // Bilibili Video ID (e.g. BV1xx...)
-  figmaUrl?: string; // Figma File URL
-  gallery?: string[]; // Additional images (URLs)
-  externalLink?: string; // External link (e.g. Bilibili, Behance)
-  tags: string[];
+  common?: {
+    category: Category;
+    image: string;
+    icon?: string;
+    websiteUrl?: string;
+    githubUrl?: string;
+  };
+  zh?: {
+    title: string;
+    subtitle: string;
+    description: string;
+    role: string;
+    tags: string[];
+    roleDetail?: string;
+  };
+  en?: {
+    title: string;
+    subtitle: string;
+    description: string;
+    role: string;
+    tags: string[];
+    roleDetail?: string;
+  };
   // New detailed fields
   concept?: string;
   roleDetail?: string;
   awards?: string[]; // Array of award strings
-  
+
   // Special field for placeholder UI
   bilingualTitle?: {
     zh: string;
     en: string;
   };
 
+  videoUrl?: string; // URL to .mp4 file
+  bilibiliId?: string; // Bilibili Video ID (e.g. BV1xx...)
+  figmaUrl?: string; // Figma File URL
+  gallery?: string[]; // Additional images (URLs)
+  externalLink?: string; // External link (e.g. Bilibili, Behance)
   websiteUrl?: string; // Online preview URL
   githubUrl?: string; // GitHub repository URL
   icon?: string; // Icon name for Dev projects

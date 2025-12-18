@@ -1,20 +1,102 @@
-
-import React, { useState, useEffect } from 'react';
-import { ARTICLES, ARTICLE_LABELS } from '../constants';
-import { ArticleCategory, Language, Article } from '../types';
-import { ArrowUpRight, ArrowDown, ArrowUp, BookOpen, Calendar, Filter } from 'lucide-react';
+import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import rehypeHighlight from 'rehype-highlight';
+import rehypeRaw from 'rehype-raw';
+import 'katex/dist/katex.min.css';
+import 'highlight.js/styles/github.css';
+import { generateArticleLabels } from '../constants';
+import { Language, Article } from '../types';
+import { useArticles } from '../src/data/articles';
+import { ArrowUpRight, ArrowDown, ArrowUp, BookOpen, Calendar, Filter, ArrowLeft, Copy, Check } from 'lucide-react';
 
 interface ArticleSectionProps {
   language: Language;
+  startViewTransition?: (update: () => void) => void;
 }
 
-export const ArticleSection: React.FC<ArticleSectionProps> = ({ language }) => {
+// 生成标题ID的工具函数
+const generateHeadingId = (text: string) => {
+  return text
+    .replace(/[^\w\s\u4e00-\u9fff-]/g, '') // 保留中文字符
+    .replace(/\s+/g, '-') // 空格替换为连字符
+    .replace(/-+/g, '-') // 多个连字符替换为单个
+    .replace(/^-|-$/g, '') // 移除开头和结尾的连字符
+    .toLowerCase();
+};
+
+// 解析文章中的标题
+const parseHeadings = (content: string) => {
+  const headingRegex = /^(#{1,6})\s+(.+)$/gm;
+  const headings: { level: number; text: string; id: string }[] = [];
+  let match;
+
+  while ((match = headingRegex.exec(content)) !== null) {
+    const level = match[1].length;
+    const text = match[2].trim();
+    const id = generateHeadingId(text);
+
+    if (id) { // 只添加有ID的标题
+      headings.push({ level, text, id });
+    }
+  }
+
+  return headings;
+};
+
+// 自定义代码块组件
+const CodeBlock = ({ children, className, ...props }: any) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    // 正确提取代码文本内容
+    const extractText = (children: any): string => {
+      if (typeof children === 'string') return children;
+      if (Array.isArray(children)) {
+        return children.map(extractText).join('');
+      }
+      if (children && typeof children === 'object' && 'props' in children) {
+        return extractText(children.props.children);
+      }
+      return String(children || '');
+    };
+
+    const text = extractText(children).replace(/\n$/, '');
+    await navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="relative group">
+      <pre className={`${className} !bg-transparent !border-0 !p-4`}>
+        <code className={className} {...props}>
+          {children}
+        </code>
+      </pre>
+      <button
+        onClick={handleCopy}
+        className="absolute top-3 right-3 bg-gray-600 hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 text-white px-2 py-1 rounded text-xs flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+        title="复制代码"
+      >
+        {copied ? <Check size={12} /> : <Copy size={12} />}
+        {copied ? '已复制' : '复制'}
+      </button>
+    </div>
+  );
+};
+
+export const ArticleSection: React.FC<ArticleSectionProps> = ({ language, startViewTransition }) => {
   const [filter, setFilter] = useState<string>('All');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
 
-  const categories = ['All', ...Object.values(ArticleCategory)];
-  const currentArticles = ARTICLES[language];
+  const { articles: currentArticles, loading } = useArticles();
+  const categories = ['All', ...Array.from(new Set(currentArticles.map(a => a.category)))];
+  const ARTICLE_LABELS = generateArticleLabels(currentArticles);
+
 
   const filteredAndSortedArticles = currentArticles
     .filter(a => filter === 'All' || a.category === filter)
@@ -24,11 +106,245 @@ export const ArticleSection: React.FC<ArticleSectionProps> = ({ language }) => {
       return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
     });
 
+  if (loading) {
+    return (
+      <div className="w-full max-w-[96vw] mx-auto pb-20 flex items-center justify-center">
+        <div className="text-lg">{language === 'zh' ? '加载中...' : 'Loading...'}</div>
+      </div>
+    );
+  }
+
+  if (selectedArticle) {
+    const headings = parseHeadings(selectedArticle.content || '');
+
+    return (
+      <div className="w-full max-w-[96vw] mx-auto pb-20">
+
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-4 justify-center">
+          {/* Left Sidebar - Author Card and Table of Contents */}
+          <div className="hidden lg:block w-64 flex-shrink-0 space-y-4">
+            {/* Author Card */}
+            <div className="h-[366px]">
+              <div className="bg-white dark:bg-gray-900/50 border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-lg h-full flex flex-col">
+                {/* Avatar */}
+                <div className="flex justify-center mb-2">
+                  <img
+                    src="https://zayck-img.pages.dev/file/1764984969206_logo.png"
+                    alt="Zayck"
+                    className="w-48 h-48 rounded-2xl object-cover cursor-pointer"
+                    onClick={() => window.open('https://zayck-img.pages.dev/file/1764984969206_logo.png', '_blank')}
+                  />
+                </div>
+
+                {/* Name */}
+                <div className="text-center mb-2">
+                  <h4 className="text-lg font-bold text-black dark:text-white">Zayck</h4>
+                  <p className="mt-2 mb-3 text-sm font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">系统 · 高效 · 实用</p>
+                </div>
+
+                {/* Divider */}
+                <div className="w-full h-px bg-gray-200 dark:bg-gray-700 mb-2"></div>
+
+                {/* Social Icons */}
+                <div className="flex justify-center space-x-4 mt-auto">
+                  <a
+                    href="https://github.com/zayck"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-400 hover:text-black dark:hover:text-white transition-colors"
+                  >
+                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                  </a>
+                  <a
+                    href="https://space.bilibili.com/341981702"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-400 hover:text-black dark:hover:text-white transition-colors"
+                  >
+                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M17.813 4.653h-.854c-.44 0-.91.044-1.378.13-.48.087-.956.247-1.326.491-.37.244-.666.564-.88.933-.213.37-.32.765-.32 1.174v.123c0 .44.107.834.32 1.204.214.37.51.69.88.934.37.244.846.404 1.326.49.468.087.938.132 1.378.132h.854c.44 0 .91-.045 1.378-.132.48-.086.956-.246 1.326-.49.37-.244.666-.564.88-.933.213-.37.32-.765.32-1.174v-.123c0-.44-.107-.834-.32-1.204-.214-.37-.51-.69-.88-.934-.37-.244-.846-.404-1.326-.49-.468-.086-.938-.131-1.378-.131zM12.64 4.653c-.44 0-.91.044-1.378.13-.48.087-.956.247-1.326.491-.37.244-.666.564-.88.933-.213.37-.32.765-.32 1.174v.123c0 .44.107.834.32 1.204.214.37.51.69.88.934.37.244.846.404 1.326.49.468.087.938.132 1.378.132.44 0 .91-.045 1.378-.132.48-.086.956-.246 1.326-.49.37-.244.666-.564.88-.933.213-.37.32-.765.32-1.174v-.123c0-.44-.107-.834-.32-1.204-.214-.37-.51-.69-.88-.934-.37-.244-.846-.404-1.326-.49-.468-.086-.938-.131-1.378-.131zM6.467 4.653h-.854c-.44 0-.91.044-1.378.13-.48.087-.956.247-1.326.491-.37.244-.666.564-.88.933-.213.37-.32.765-.32 1.174v.123c0 .44.107.834.32 1.204.214.37.51.69.88.934.37.244.846.404 1.326.49.468.087.938.132 1.378.132h.854c.44 0 .91-.045 1.378-.132.48-.086.956-.246 1.326-.49.37-.244.666-.564.88-.933.213-.37.32-.765.32-1.174v-.123c0-.44-.107-.834-.32-1.204-.214-.37-.51-.69-.88-.934-.37-.244-.846-.404-1.326-.49-.468-.086-.938-.131-1.378-.131z"/>
+                    </svg>
+                  </a>
+                  <a
+                    href="https://mp.weixin.qq.com/mp/homepage?__biz=MzU2MTI5MzE4OA==&hid=1&sn=356f3016aeac48fc034804fca1307349&scene=18#wechat_redirect"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-400 hover:text-black dark:hover:text-white transition-colors"
+                  >
+                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.138 3.217 5.33-.094.324-.188.685-.188 1.047 0 .585.151.988.41 1.181-.384.645-.673 1.365-.673 2.188 0 1.657 1.297 3.012 2.916 3.012.461 0 .895-.089 1.307-.249l.6.749c.088.11.196.196.324.245.128.049.268.061.402.035l.598-.749c.413.16.846.249 1.307.249 1.619 0 2.916-1.355 2.916-3.012 0-.823-.289-1.543-.673-2.188.259-.193.41-.596.41-1.181 0-.362-.094-.723-.188-1.047C16.83 13.668 18 11.742 18 9.53c0-4.054-3.891-7.342-8.691-7.342zm2.889 10.878c-.461 0-.895.089-1.307.249l-.6-.749c-.088-.11-.196-.196-.324-.245-.128-.049-.268-.061-.402-.035l-.598.749c-.413-.16-.846-.249-1.307-.249-1.619 0-2.916 1.355-2.916 3.012 0 .823.289 1.543.673 2.188-.259.193-.41.596-.41 1.181 0 .362.094.723.188 1.047C1.17 15.862 0 17.788 0 20c0 4.054 3.891 7.342 8.691 7.342s8.691-3.288 8.691-7.342c0-2.212-1.17-4.138-3.217-5.33.094-.324.188-.685.188-1.047 0-.585-.151-.988-.41-1.181.384-.645.673-1.365.673-2.188 0-1.657-1.297-3.012-2.916-3.012z"/>
+                    </svg>
+                  </a>
+                  <a
+                    href="https://zayck.pages.dev/rss.xml"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-400 hover:text-black dark:hover:text-white transition-colors"
+                  >
+                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M19.199 24C19.199 13.467 10.533 4.8 0 4.8V0c13.165 0 23.8 10.635 23.8 23.8h-4.601zM3.6 7.2v3.8c5.1 0 9.2 4.1 9.2 9.2h3.8c0-7.2-5.8-13-13-13zM7.2 16.8c0 1.68-1.32 3-3 3s-3-1.32-3-3 1.32-3 3-3 3 1.32 3 3z"/>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Table of Contents */}
+            {headings.length > 0 && (
+              <div className="bg-white dark:bg-gray-900/50 border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-lg">
+                <h3 className="text-2xl font-black mb-6 flex items-center gap-2">
+                  <BookOpen size={20} />
+                  {language === 'zh' ? '目录' : 'Contents'}
+                </h3>
+                <div className="flex flex-col space-y-2">
+                  {headings.map((heading, index) => (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        const element = document.getElementById(heading.id);
+                        if (element) {
+                          // 添加偏移量，避免标题被导航栏遮挡
+                          const offset = 100; // 像素偏移量
+                          const elementPosition = element.getBoundingClientRect().top;
+                          const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+                          window.scrollTo({
+                            top: offsetPosition,
+                            behavior: 'smooth'
+                          });
+                        }
+                      }}
+                      className={`
+                        text-left px-4 py-3 rounded-lg transition-all duration-300 text-base font-medium
+                        hover:bg-gray-100 dark:hover:bg-gray-800
+                        ${heading.level === 1 ? 'text-black dark:text-white font-bold' : ''}
+                        ${heading.level === 2 ? 'text-gray-700 dark:text-gray-300 ml-2' : ''}
+                        ${heading.level >= 3 ? 'text-gray-600 dark:text-gray-400 ml-4' : ''}
+                      `}
+                      style={{ paddingLeft: `${(heading.level - 1) * 16 + 16}px` }}
+                    >
+                      {heading.text}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Back to List Button */}
+            <div className="mt-8">
+              <button
+                onClick={() => setSelectedArticle(null)}
+                className="flex items-center gap-2 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-base font-bold w-full"
+              >
+                <ArrowLeft size={16} />
+                {language === 'zh' ? '返回列表' : 'Back to List'}
+              </button>
+            </div>
+          </div>
+
+          {/* Right Content Area */}
+          <div className="flex-grow max-w-4xl">
+            <div className="bg-white dark:bg-gray-900/50 border border-gray-200 dark:border-gray-800 rounded-xl shadow-lg">
+              {/* Article Cover Image */}
+              {selectedArticle.coverImage && (
+                <div className="w-full h-[386px] relative">
+                  <img
+                    src={selectedArticle.coverImage}
+                    alt={selectedArticle.title}
+                    className="w-full h-full rounded-t-xl object-cover"
+                    loading="lazy"
+                    referrerPolicy="no-referrer"
+                  />
+                  {/* Title Overlay */}
+                  <div className="absolute bottom-4 left-4 bg-[rgb(80,81,78)] text-white px-4 py-2 rounded-lg shadow-lg">
+                    <h1 className="text-3xl font-black leading-tight">{selectedArticle.title}</h1>
+                  </div>
+                </div>
+              )}
+
+              <article className="prose prose-lg dark:prose-invert max-w-none prose-table:border-collapse prose-table:border prose-table:border-gray-300 dark:prose-table:border-gray-600 prose-th:border prose-th:border-gray-300 dark:prose-th:border-gray-600 prose-th:bg-gray-50 dark:prose-th:bg-gray-800 prose-td:border prose-td:border-gray-300 dark:prose-td:border-gray-600 prose-blockquote:border-l-4 prose-blockquote:border-l-black dark:prose-blockquote:border-l-white prose-pre:!bg-transparent prose-code:!bg-gray-100 dark:prose-code:!bg-gray-800 prose-code:px-1 prose-code:py-0.5 prose-code:rounded p-8">
+                <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-8">
+                  <span>{selectedArticle.date}</span>
+                  <span>•</span>
+                  <span>{selectedArticle.tags && selectedArticle.tags.length > 0 ? selectedArticle.tags.join(', ') : ARTICLE_LABELS[language][selectedArticle.category] || selectedArticle.category}</span>
+                </div>
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm, remarkMath]}
+                  rehypePlugins={[rehypeRaw, rehypeKatex, rehypeHighlight]}
+                  components={{
+                    code: ({ node, inline, className, children, ...props }: any) => {
+                      const match = /language-(\w+)/.exec(className || '');
+                      return !inline && match ? (
+                        <CodeBlock className={className} {...props}>
+                          {children}
+                        </CodeBlock>
+                      ) : (
+                        <code className={className} {...props}>
+                          {children}
+                        </code>
+                      );
+                    },
+                    h1: ({ children, ...props }: any) => {
+                      const text = String(children || '').trim();
+                      const id = generateHeadingId(text);
+                      return React.createElement('h1', { id, ...props }, children);
+                    },
+                    h2: ({ children, ...props }: any) => {
+                      const text = String(children || '').trim();
+                      const id = generateHeadingId(text);
+                      return React.createElement('h2', { id, ...props }, children);
+                    },
+                    h3: ({ children, ...props }: any) => {
+                      const text = String(children || '').trim();
+                      const id = generateHeadingId(text);
+                      return React.createElement('h3', { id, ...props }, children);
+                    },
+                    h4: ({ children, ...props }: any) => {
+                      const text = String(children || '').trim();
+                      const id = generateHeadingId(text);
+                      return React.createElement('h4', { id, ...props }, children);
+                    },
+                    h5: ({ children, ...props }: any) => {
+                      const text = String(children || '').trim();
+                      const id = generateHeadingId(text);
+                      return React.createElement('h5', { id, ...props }, children);
+                    },
+                    h6: ({ children, ...props }: any) => {
+                      const text = String(children || '').trim();
+                      const id = generateHeadingId(text);
+                      return React.createElement('h6', { id, ...props }, children);
+                    }
+                  }}
+                >
+                  {selectedArticle.content || ''}
+                </ReactMarkdown>
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full max-w-[96vw] mx-auto pb-20">
-      
+
+      {/* Page Title - Only show when not in article detail view */}
+      {!selectedArticle && (
+        <div className="mb-24 flex flex-col items-center text-center">
+          <h1 className="text-[8vw] leading-none font-black mb-8 text-black dark:text-white transition-colors duration-300">
+            {language === 'zh' ? '文章' : 'Articles'}
+          </h1>
+          <p className="text-2xl text-gray-500 dark:text-gray-400 max-w-2xl font-medium transition-colors duration-300">
+            {language === 'zh' ? '个人思考、学习分享与生活记录。' : 'Thoughts, learning journey, and life records.'}
+          </p>
+        </div>
+      )}
+
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 justify-center">
-        
+
         {/* Left Sidebar - Desktop */}
         <div className="hidden lg:block w-64 flex-shrink-0">
           <div className="sticky top-32">
@@ -43,8 +359,8 @@ export const ArticleSection: React.FC<ArticleSectionProps> = ({ language }) => {
                   onClick={() => setFilter(cat)}
                   className={`
                     text-left px-4 py-3 rounded-xl transition-all duration-300 text-lg font-bold
-                    ${filter === cat 
-                      ? 'bg-black text-white dark:bg-white dark:text-black shadow-lg transform scale-105' 
+                    ${filter === cat
+                      ? 'bg-black text-white dark:bg-white dark:text-black shadow-lg transform scale-105'
                       : 'text-gray-400 hover:text-black dark:text-gray-500 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'}
                   `}
                 >
@@ -63,26 +379,26 @@ export const ArticleSection: React.FC<ArticleSectionProps> = ({ language }) => {
               onClick={() => setFilter(cat)}
               className={`
                 whitespace-nowrap px-4 py-2 rounded-full text-sm font-bold border-2 transition-all duration-300
-                ${filter === cat 
-                  ? 'border-black bg-black text-white dark:border-white dark:bg-white dark:text-black' 
+                ${filter === cat
+                  ? 'border-black bg-black text-white dark:border-white dark:bg-white dark:text-black'
                   : 'border-gray-200 text-gray-400 dark:border-gray-800 dark:text-gray-500'}
               `}
             >
               {ARTICLE_LABELS[language][cat] || cat}
             </button>
-          ))}
+           ))}
         </div>
 
         {/* Right Content Area */}
         <div className="flex-grow max-w-4xl">
-          
+
           {/* Sort Controls Panel */}
           <div className="flex justify-between items-center mb-8 pb-4 border-b border-gray-200 dark:border-gray-800">
              <div className="text-sm font-mono text-gray-400">
                 {filteredAndSortedArticles.length} {language === 'zh' ? '篇文章' : 'Articles'}
              </div>
-             
-             <button 
+
+             <button
                onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
                className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm font-bold text-gray-600 dark:text-gray-300"
              >
@@ -95,19 +411,25 @@ export const ArticleSection: React.FC<ArticleSectionProps> = ({ language }) => {
           {/* Article List - One per line */}
           <div className="flex flex-col gap-6">
             {filteredAndSortedArticles.map((article) => (
-              <div 
-                key={article.id} 
+              <div
+                key={article.id}
                 className="group cursor-pointer"
-                onClick={() => window.open(article.link, '_blank')}
+                onClick={() => {
+                  if (startViewTransition) {
+                    startViewTransition(() => setSelectedArticle(article));
+                  } else {
+                    setSelectedArticle(article);
+                  }
+                }}
               >
                 <div className="flex flex-col md:flex-row bg-white dark:bg-gray-900/50 border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden p-2 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 items-stretch h-auto">
-                    
+
                     {/* Cover Image Container - Responsive aspect ratio 900:383 */}
                     <div className="w-full md:w-[45%] aspect-[900/383] shrink-0 rounded-xl overflow-hidden relative bg-gray-100 dark:bg-gray-900 transform-gpu">
                         {article.coverImage ? (
-                             <img 
-                             src={article.coverImage} 
-                             alt={article.title} 
+                             <img
+                             src={article.coverImage}
+                             alt={article.title}
                              loading="lazy"
                              decoding="async"
                              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 will-change-transform"
@@ -118,7 +440,7 @@ export const ArticleSection: React.FC<ArticleSectionProps> = ({ language }) => {
                                  <BookOpen size={32} className="text-gray-300 dark:text-gray-600" />
                             </div>
                         )}
-                       
+
                         <div className="absolute top-2 left-2 bg-white/90 dark:bg-black/90 text-black dark:text-white px-2 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md shadow-sm">
                           {ARTICLE_LABELS[language][article.category].split('|')[0].trim()}
                         </div>
@@ -136,11 +458,13 @@ export const ArticleSection: React.FC<ArticleSectionProps> = ({ language }) => {
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div className="flex items-center gap-3 text-xs md:text-sm font-mono text-gray-400 dark:text-gray-500 border-t border-gray-100 dark:border-gray-800 pt-3 mt-2">
                              <span>{article.date || 'No Date'}</span>
                              <span className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700"></span>
-                             <span className="truncate hidden md:inline">Read on WeChat</span>
+                             <span className="truncate hidden md:inline">
+                               {article.tags && article.tags.length > 0 ? article.tags.join(', ') : 'Read on WeChat'}
+                             </span>
                         </div>
                     </div>
                 </div>

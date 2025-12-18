@@ -1,7 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Music, X, Play, Pause, SkipForward, SkipBack, Volume2, VolumeX } from 'lucide-react';
-import { MUSIC_PLAYLIST, Song } from '../src/data/music';
 import ElasticSlider from './ElasticSlider';
+import { METING_CONFIG } from '../constants';
+
+type Song = {
+  id: number;
+  title: string;
+  artist: string;
+  cover: string;
+  url?: string;
+}
 
 interface MusicPlayerProps {
   initialVisible?: boolean;
@@ -17,9 +25,10 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({ initialVisible = false
   const [volume, setVolume] = useState(0.5);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [musicPlaylist, setMusicPlaylist] = useState<Song[]>([]);
   
   const audioRef = useRef<HTMLAudioElement>(null);
-  const currentSong = MUSIC_PLAYLIST[currentSongIndex];
+  const currentSong = musicPlaylist[currentSongIndex];
 
   const [hasInteracted, setHasInteracted] = useState(false);
   
@@ -72,12 +81,12 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({ initialVisible = false
   };
 
   const handleNext = () => {
-    setCurrentSongIndex((prev) => (prev + 1) % MUSIC_PLAYLIST.length);
+    setCurrentSongIndex((prev) => (prev + 1) % musicPlaylist.length);
     setIsPlaying(true);
   };
 
   const handlePrev = () => {
-    setCurrentSongIndex((prev) => (prev - 1 + MUSIC_PLAYLIST.length) % MUSIC_PLAYLIST.length);
+    setCurrentSongIndex((prev) => (prev - 1 + musicPlaylist.length) % musicPlaylist.length);
     setIsPlaying(true);
   };
 
@@ -124,12 +133,94 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({ initialVisible = false
     setProgress(newTime);
   };
 
-  // Get direct MP3 url using the standard Netease pattern
-  // Note: This relies on the open endpoint which usually works for standard quality
-  // Use https to avoid mixed content errors
+  // Fetch music playlist from Meting API
+  useEffect(() => {
+    const fetchMusicPlaylist = async () => {
+      try {
+        // Replace placeholders in API URL
+        const apiUrl = METING_CONFIG.api
+          .replace(':server', METING_CONFIG.server)
+          .replace(':type', METING_CONFIG.type)
+          .replace(':id', METING_CONFIG.id)
+          .replace(':r', Math.random().toString());
+
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+
+        // Transform API response to Song interface
+        const playlist: Song[] = data.map((song: any, index: number) => ({
+          id: song.id || index,
+          title: song.name,
+          artist: song.artist,
+          cover: song.pic,
+          url: song.url
+        }));
+
+        setMusicPlaylist(playlist);
+    
+        // 添加这一行：确保有歌曲时重置到第一首
+        if (playlist.length > 0) {
+          setCurrentSongIndex(0);
+        }
+      } catch (error) {
+        console.error("Failed to fetch music playlist:", error);
+        
+        // Try fallback APIs if available
+        if (METING_CONFIG.fallbackApis && METING_CONFIG.fallbackApis.length > 0) {
+          for (const fallbackApi of METING_CONFIG.fallbackApis) {
+            try {
+              const apiUrl = fallbackApi
+                .replace(':server', METING_CONFIG.server)
+                .replace(':type', METING_CONFIG.type)
+                .replace(':id', METING_CONFIG.id);
+
+              const response = await fetch(apiUrl);
+              const data = await response.json();
+
+              const playlist: Song[] = data.map((song: any, index: number) => ({
+                id: song.id || index,
+                title: song.name,
+                artist: song.artist,
+                cover: song.pic,
+                url: song.url
+              }));
+
+              setMusicPlaylist(playlist);
+              // 添加这一行：确保有歌曲时重置到第一首
+              if (playlist.length > 0) {
+                setCurrentSongIndex(0);
+              }
+
+              break; // Stop trying fallbacks if successful
+            } catch (fallbackError) {
+              console.error(`Failed to fetch from fallback API: ${fallbackApi}`, fallbackError);
+            }
+          }
+        }
+      }
+    };
+
+    fetchMusicPlaylist();
+  }, []);
+
+  // 修复：完善播放列表变化的处理逻辑
+  useEffect(() => {
+    // 当播放列表从空变为有歌曲时，设置当前索引为0
+    if (musicPlaylist.length > 0) {
+      // 确保当前索引在有效范围内
+      if (currentSongIndex >= musicPlaylist.length) {
+        setCurrentSongIndex(0);
+      }
+      // 或者直接强制设置为第一首，确保始终有歌曲显示
+      setCurrentSongIndex(0);
+    }
+  }, [musicPlaylist]);
+
+
+  // Get direct MP3 url using the Meting API pattern
   const getSongUrl = (song: Song) => {
     if (song.url) return song.url;
-    return `https://music.163.com/song/media/outer/url?id=${song.id}.mp3`;
+    return '';
   };
 
   // Ensure audio is properly disposed only when component unmounts
@@ -145,22 +236,24 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({ initialVisible = false
     <div className="fixed right-6 bottom-6 z-50 flex flex-col items-end gap-4 pointer-events-none">
       
       {/* Hidden Audio Element - Always mounted */}
-      <audio 
-        ref={audioRef}
-        src={getSongUrl(currentSong)}
-        crossOrigin="anonymous"
-        onTimeUpdate={(e) => {
-            if (!isSeeking) {
-                setProgress(e.currentTarget.currentTime);
-            }
-        }}
-        onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
-        onEnded={handleNext}
-        onError={() => {
-          console.error("Audio load failed for song:", currentSong.title);
-          setIsPlaying(false);
-        }}
-      />
+      {currentSong && (
+        <audio 
+          ref={audioRef}
+          src={getSongUrl(currentSong)}
+          crossOrigin="anonymous"
+          onTimeUpdate={(e) => {
+              if (!isSeeking) {
+                  setProgress(e.currentTarget.currentTime);
+              }
+          }}
+          onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
+          onEnded={handleNext}
+          onError={() => {
+            console.error("Audio load failed for song:", currentSong.title);
+            setIsPlaying(false);
+          }}
+        />
+      )}
 
       {/* Floating Prompt Bubble */}
       {showPrompt && !isOpen && (
@@ -217,23 +310,25 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({ initialVisible = false
             </div>
 
             {/* Cover & Info */}
-            <div className="flex gap-4 mb-5 relative z-10">
-              <div className={`w-20 h-20 rounded-xl overflow-hidden shadow-lg shrink-0 border border-black/5 dark:border-white/5 ${isPlaying ? 'animate-pulse-slow' : ''}`}>
-                <img 
-                  src={currentSong.cover} 
-                  alt={currentSong.title}
-                  className="w-full h-full object-cover"
-                />
+            {currentSong && (
+              <div className="flex gap-4 mb-5 relative z-10">
+                <div className={`w-20 h-20 rounded-xl overflow-hidden shadow-lg shrink-0 border border-black/5 dark:border-white/5 ${isPlaying ? 'animate-pulse-slow' : ''}`}>
+                  <img 
+                    src={currentSong.cover} 
+                    alt={currentSong.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex flex-col justify-center min-w-0">
+                  <h3 className="font-bold text-lg text-zinc-800 dark:text-white truncate leading-tight mb-1">
+                    {currentSong.title}
+                  </h3>
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400 truncate font-medium">
+                    {currentSong.artist}
+                  </p>
+                </div>
               </div>
-              <div className="flex flex-col justify-center min-w-0">
-                <h3 className="font-bold text-lg text-zinc-800 dark:text-white truncate leading-tight mb-1">
-                  {currentSong.title}
-                </h3>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400 truncate font-medium">
-                  {currentSong.artist}
-                </p>
-              </div>
-            </div>
+            )}
 
             {/* Controls */}
             <div className="flex flex-col gap-4 relative z-10">
@@ -293,6 +388,18 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({ initialVisible = false
         )}
       </div>
 
+      {/* Back to Top Button */}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className="w-12 h-12 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-white/20 dark:border-zinc-700/50 rounded-full shadow-lg flex items-center justify-center text-zinc-600 dark:text-zinc-400 hover:scale-110 transition-transform duration-200 pointer-events-auto"
+        title="Back to Top"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
+        </svg>
+      </button>
+
+      {/* Styles */}
       <style>{`
         @keyframes bounce-subtle {
           0%, 100% { transform: translateY(0); }

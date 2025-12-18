@@ -44,10 +44,8 @@ function App() {
   const scrollPositionRef = useRef<number>(0);
 
   useEffect(() => {
-    // Automatic theme based on time: 19:00 - 06:00 is dark mode
-    const hour = new Date().getHours();
-    const isDarkTime = hour >= 19 || hour < 6;
-    setTheme(isDarkTime ? 'dark' : 'light');
+    // Default to light mode
+    setTheme('light');
   }, []);
 
   useEffect(() => {
@@ -379,16 +377,8 @@ function App() {
       case 'articles':
         return (
           <div className="pt-20 w-full max-w-[96vw] mx-auto">
-             <div className="mb-24 flex flex-col items-center text-center">
-               <h1 className="text-[8vw] leading-none font-black mb-8 text-black dark:text-white transition-colors duration-300">
-                 {ARTICLES_PAGE_DATA[language].title}
-               </h1>
-               <p className="text-2xl text-gray-500 dark:text-gray-400 max-w-2xl font-medium transition-colors duration-300">
-                 {ARTICLES_PAGE_DATA[language].description}
-               </p>
-             </div>
-             <ArticleSection language={language} />
-          </div>
+              <ArticleSection language={language} startViewTransition={startViewTransition} />
+           </div>
         );
       case 'about':
         return (
@@ -656,7 +646,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white font-sans selection:bg-black dark:selection:bg-white selection:text-white dark:selection:text-black overflow-x-hidden transition-colors duration-300">
+    <div className="min-h-screen bg-[#F6F4FB] dark:bg-black text-black dark:text-white font-sans selection:bg-black dark:selection:bg-white selection:text-white dark:selection:text-black overflow-x-hidden transition-colors duration-300">
       
       <MusicPlayer />
       {/* Dynamic Navigation */}
@@ -678,7 +668,7 @@ function App() {
 
          {/* Footer */}
          <footer className="w-full max-w-[96vw] mx-auto mt-32 border-t-2 border-black dark:border-white pt-12 flex flex-col md:flex-row justify-between items-center text-sm font-light text-gray-400 dark:text-gray-500 uppercase tracking-wide gap-4 transition-colors duration-300">
-            <p>© 2025 LUN3CY FAN</p>
+            <p>© 2025 Zayck 少阳</p>
             <p>{content.footerDesign}</p>
          </footer>
       </main>
